@@ -4,6 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="robots" content="noindex, nofollow">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src https://script.google.com https://script.googleusercontent.com; manifest-src 'self'; worker-src 'self'; object-src 'none'; base-uri 'self'; form-action 'none'">
+<meta name="referrer" content="no-referrer">
 <meta name="theme-color" content="#000000">
 <meta name="color-scheme" content="dark">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -368,14 +370,12 @@
   // ---------- связь с сервером ----------
   function call(payload) {
     payload = Object.assign({ key: S.key }, payload);
-    if (window.google && google.script && google.script.run) {
-      return new Promise((res, rej) => google.script.run.withSuccessHandler(res).withFailureHandler(rej).api(payload));
-    }
     return fetch(API_URL, { method: 'POST', body: JSON.stringify(Object.assign({ type: 'admin' }, payload)) }).then(r => r.json());
   }
   const ERR = {
     auth: 'Неверный код доступа.', locked: 'Слишком много попыток. Подождите 15 минут.',
     nokey: 'Код доступа не настроен: добавьте ADMIN_KEY в свойства скрипта.',
+    weakkey: 'Коды доступа слишком короткие или одинаковые: нужно минимум 10 символов, коды владельца и сотрудника — разные.',
     forbidden: 'У вас доступ только для просмотра.', validation: 'Проверьте дату, время и имя.',
     notfound: 'Запись не найдена — обновите список.'
   };
